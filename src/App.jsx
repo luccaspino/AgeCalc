@@ -167,7 +167,7 @@ function App() {
           <div className="divider">
             <hr />
             <button type="submit">
-              <img src="/src/assets/images/icon-arrow.svg" alt="submit" />
+              <img src="src/assets/images/icon-arrow.svg" alt="submit" />
             </button>
           </div>
         </form>
