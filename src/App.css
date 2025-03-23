@@ -50,7 +50,7 @@ body {
   color: hsl(0, 100%, 67%);
 }
 
-/* Remove spinner arrows from number inputs */
+
 input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -139,7 +139,7 @@ button:hover {
   color: hsl(259, 100%, 65%);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) { 
   .app {
     padding: 1.5rem;
     border-radius: 24px 24px 100px 24px;
