@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import "./App.css";
 
-function App() {
+function App() { // Uso do ReactHook UseState para gerenciar os estados das 3 variaveis
   const [formData, setFormData] = useState({ dia: "", mes: "", ano: "" });
   const [idade, setIdade] = useState({ anos: "--", meses: "--", dias: "--" });
   const [erros, setErros] = useState({ dia: "", mes: "", ano: "" });
   const [valido, setValido] = useState(false);
 
-  const AnoBissexto = (ano) => {
+  const AnoBissexto = (ano) => { //funcao pra verificar se é ano bissexto
     return (ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0;
   };
 
-  const validarDados = (dia, mes, ano) => {
+  const validarDados = (dia, mes, ano) => { //criacao de erros -> preenchimento 
     let novosErros = {};
 
     if (!dia.trim()) novosErros.dia = "This field is required";
@@ -20,7 +20,8 @@ function App() {
 
     if (Object.keys(novosErros).length > 0) return novosErros;
 
-    dia = parseInt(dia);
+    // converte a string pra int
+    dia = parseInt(dia); 
     mes = parseInt(mes);
     ano = parseInt(ano);
 
@@ -29,19 +30,19 @@ function App() {
 
     // Verifica se a data é no futuro
     if (dataInserida > dataAtual) {
-      novosErros.ano = "Must be in the past";
+      novosErros.ano = "Must be in the past"; // data tem que ser no presente
     }
 
     if (mes < 1 || mes > 12) {
-      novosErros.mes = "Must be a valid month";
+      novosErros.mes = "Must be a valid month"; // filtro de entrada valida para meses
     }
     if (dia < 1 || dia > 31) {
-      novosErros.dia = "Must be a valid day";
+      novosErros.dia = "Must be a valid day"; // primeiro filtro de dias em relacao a 1-31
     }
 
-    const diasNoMes = {
+    const diasNoMes = { //var para definir limites de dias validos em cada mes
       1: 31,
-      2: AnoBissexto(ano) ? 29 : 28,
+      2: AnoBissexto(ano) ? 29 : 28, // Uso da funcao ano bissexto somente em fev
       3: 31,
       4: 30,
       5: 31,
@@ -54,14 +55,14 @@ function App() {
       12: 31,
     };
 
-    if (dia > diasNoMes[mes]) {
+    if (dia > diasNoMes[mes]) { // validacao de dia
       novosErros.dia = "Must be a valid date";
     }
 
     return novosErros;
   };
 
-  const calcularIdade = (dia, mes, ano) => {
+  const calcularIdade = (dia, mes, ano) => { 
     const dataNascimento = new Date(ano, mes - 1, dia);
     const dataAtual = new Date();
 
