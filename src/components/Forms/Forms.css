@@ -1,0 +1,80 @@
+.inputs-container {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  max-width: 160px;
+  position: relative;
+}
+
+.label-text {
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: hsl(0, 1%, 44%);
+  margin-bottom: 0.5rem;
+}
+
+.input-group.erro .label-text {
+  color: hsl(0, 100%, 67%);
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input {
+  padding: 1rem;
+  border: 1px solid hsl(0, 0%, 86%);
+  border-radius: 8px;
+  font-size: 2rem;
+  font-weight: 700;
+  width: 100%;
+  outline: none;
+  color: hsl(0, 0%, 8%);
+}
+
+input.erro {
+  border-color: hsl(0, 100%, 67%);
+}
+
+input::placeholder {
+  color: hsl(0, 0%, 86%);
+}
+
+input:focus {
+  border-color: hsl(259, 100%, 65%);
+}
+
+.error-text {
+  color: hsl(0, 100%, 67%);
+  font-size: 0.875rem;
+  font-style: italic;
+  margin: 0.5rem 0 0;
+}
+
+@media (max-width: 768px) {
+  .inputs-container {
+    gap: 1rem;
+  }
+
+  .input-group {
+    max-width: none;
+  }
+
+  input {
+    font-size: 1.25rem;
+    padding: 0.75rem;
+  }
+}
