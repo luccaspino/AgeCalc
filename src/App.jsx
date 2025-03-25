@@ -14,71 +14,53 @@ const App = () => {
 
   const validarDados = (dia, mes, ano) => {
     let novosErros = {};
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtual = hoje.getMonth() + 1;
+    const diaAtual = hoje.getDate();
 
-    // Validações independentes para cada campo
-    if (!dia.trim()) {
-      novosErros.day = "This field is required";
-    } else {
-      const diaNum = parseInt(dia);
-      if (isNaN(diaNum) || diaNum < 1 || diaNum > 31) {
-        novosErros.day = "Must be a valid day";
-      }
-    }
+    // Verificação de campos obrigatórios
+    if (!dia.trim()) novosErros.day = "This field is required";
+    if (!mes.trim()) novosErros.month = "This field is required";
+    if (!ano.trim()) novosErros.year = "This field is required";
 
-    if (!mes.trim()) {
-      novosErros.month = "This field is required";
-    } else {
-      const mesNum = parseInt(mes);
-      if (isNaN(mesNum) || mesNum < 1 || mesNum > 12) {
-        novosErros.month = "Must be a valid month";
-      }
-    }
+    if (Object.keys(novosErros).length > 0) return novosErros;
 
-    if (!ano.trim()) {
-      novosErros.year = "This field is required";
-    } else {
-      const anoNum = parseInt(ano);
-      const anoAtual = new Date().getFullYear();
-      if (isNaN(anoNum) || anoNum > anoAtual) {
+    // Conversão para números
+    const diaNum = parseInt(dia);
+    const mesNum = parseInt(mes);
+    const anoNum = parseInt(ano);
+
+    // Validações básicas
+    if (diaNum < 1 || diaNum > 31) novosErros.day = "Must be a valid day";
+    if (mesNum < 1 || mesNum > 12) novosErros.month = "Must be a valid month";
+    if (anoNum > anoAtual) novosErros.year = "Must be in the past";
+
+    // Validação de datas futuras no ano atual
+    if (anoNum === anoAtual) {
+      if (mesNum > mesAtual || (mesNum === mesAtual && diaNum > diaAtual)) {
         novosErros.year = "Must be in the past";
       }
     }
 
-    // Validações combinadas apenas se todos os campos estiverem preenchidos e válidos individualmente
-    const diaValido = !novosErros.day && dia.trim();
-    const mesValido = !novosErros.month && mes.trim();
-    const anoValido = !novosErros.year && ano.trim();
+    // Validação de dias no mês
+    const diasNoMes = {
+      1: 31,
+      2: anoBissexto(anoNum) ? 29 : 28,
+      3: 31,
+      4: 30,
+      5: 31,
+      6: 30,
+      7: 31,
+      8: 31,
+      9: 30,
+      10: 31,
+      11: 30,
+      12: 31,
+    };
 
-    if (diaValido && mesValido && anoValido) {
-      const diaNum = parseInt(dia);
-      const mesNum = parseInt(mes);
-      const anoNum = parseInt(ano);
-
-      const diasNoMes = {
-        1: 31,
-        2: anoBissexto(anoNum) ? 29 : 28,
-        3: 31,
-        4: 30,
-        5: 31,
-        6: 30,
-        7: 31,
-        8: 31,
-        9: 30,
-        10: 31,
-        11: 30,
-        12: 31,
-      };
-
-      if (diaNum > diasNoMes[mesNum]) {
-        novosErros.day = `Must be between 1-${diasNoMes[mesNum]}`;
-      }
-
-      const dataTeste = new Date(anoNum, mesNum - 1, diaNum);
-      if (dataTeste.getDate() !== diaNum || 
-          dataTeste.getMonth() + 1 !== mesNum || 
-          dataTeste.getFullYear() !== anoNum) {
-        novosErros.day = "Must be a valid date";
-      }
+    if (mesNum in diasNoMes && diaNum > diasNoMes[mesNum]) {
+      novosErros.day = `Must be between 1-${diasNoMes[mesNum]}`;
     }
 
     return novosErros;
@@ -117,7 +99,12 @@ const App = () => {
       meses += 12;
     }
 
-    setIdade({ years: anos, months: meses, days: dias });
+    // Mostrar 0 em vez de -- quando a diferença for zero
+    setIdade({
+      years: anos === 0 ? "0" : anos.toString(),
+      months: meses === 0 ? "0" : meses.toString(),
+      days: dias === 0 ? "0" : dias.toString()
+    });
   };
 
   return (
@@ -126,11 +113,11 @@ const App = () => {
         <Forms onDateChange={handleMudancaData} errors={erros} />
         <div className="divider">
           <hr />
-          <button onClick={calcularIdade} className="calculate-button">
+          <button onClick={calcularIdade} className="botao-calcular">
             <img 
               src="/images/icon-arrow.svg" 
               alt="Calculate age" 
-              className="arrow-icon"
+              className="icone-seta"
             />
           </button>
         </div>
