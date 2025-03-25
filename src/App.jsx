@@ -60,7 +60,7 @@ const App = () => {
     };
 
     if (mesNum in diasNoMes && diaNum > diasNoMes[mesNum]) {
-      novosErros.day = `Must be between 1-${diasNoMes[mesNum]}`;
+      novosErros.day = novosErros.day = "Must be a valid day";
     }
 
     return novosErros;
