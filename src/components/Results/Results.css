@@ -1,0 +1,20 @@
+.result {
+  font-size: 6.5rem;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.1;
+}
+
+.result p {
+  margin: 0;
+}
+
+.result span {
+  color: hsl(259, 100%, 65%);
+}
+
+@media (max-width: 768px) {
+  .result {
+    font-size: 3.5rem;
+  }
+}
