@@ -24,73 +24,6 @@ body {
   max-width: 840px;
 }
 
-.inputs-container {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  max-width: 160px;
-  position: relative;
-}
-
-.label-text {
-  font-weight: 700;
-  font-size: 0.875rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: hsl(0, 1%, 44%);
-  margin-bottom: 0.5rem;
-}
-
-.input-group.erro .label-text {
-  color: hsl(0, 100%, 67%);
-}
-
-
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input {
-  padding: 1rem;
-  border: 1px solid hsl(0, 0%, 86%);
-  border-radius: 8px;
-  font-size: 2rem;
-  font-weight: 700;
-  width: 100%;
-  outline: none;
-  color: hsl(0, 0%, 8%);
-}
-
-input.erro {
-  border-color: hsl(0, 100%, 67%);
-}
-
-input::placeholder {
-  color: hsl(0, 0%, 86%);
-}
-
-input:focus {
-  border-color: hsl(259, 100%, 65%);
-}
-
-.error-text {
-  color: hsl(0, 100%, 67%);
-  font-size: 0.875rem;
-  font-style: italic;
-  margin: 0.5rem 0 0;
-}
-
 .divider {
   position: relative;
   margin: 2rem 0;
@@ -124,38 +57,15 @@ button:hover {
   background-color: hsl(0, 0%, 8%);
 }
 
-.result {
-  font-size: 6.5rem;
-  font-weight: 800;
-  font-style: italic;
-  line-height: 1.1;
+.arrow-icon {
+  width: 46px;
+  height: 44px;
 }
 
-.result p {
-  margin: 0;
-}
-
-.result span {
-  color: hsl(259, 100%, 65%);
-}
-
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
   .app {
     padding: 1.5rem;
     border-radius: 24px 24px 100px 24px;
-  }
-
-  .inputs-container {
-    gap: 1rem;
-  }
-
-  .input-group {
-    max-width: none;
-  }
-
-  input {
-    font-size: 1.25rem;
-    padding: 0.75rem;
   }
 
   button {
@@ -166,7 +76,29 @@ button:hover {
     transform: translate(-50%, -50%);
   }
 
-  .result {
-    font-size: 3.5rem;
+  .arrow-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+
+@media (max-width: 430px) {
+  .app {
+    padding: 0.25rem;
+    border-radius: 24px 24px 100px 24px;
+  }
+
+  button {
+    width: 64px;
+    height: 64px;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+  }
+
+  .arrow-icon {
+    width: 30px;
+    height: 30px;
   }
 }
