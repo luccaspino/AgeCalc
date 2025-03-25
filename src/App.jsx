@@ -1,185 +1,143 @@
-import React, { useState } from "react";
-import "./App.css";
+import React, { useState } from 'react';
+import Forms from './components/Forms/Forms';
+import Results from './components/Results/Results';
+import './App.css';
 
-function App() { // Uso do ReactHook UseState para gerenciar os estados das 3 variaveis
-  const [formData, setFormData] = useState({ dia: "", mes: "", ano: "" });
-  const [idade, setIdade] = useState({ anos: "--", meses: "--", dias: "--" });
-  const [erros, setErros] = useState({ dia: "", mes: "", ano: "" });
-  const [valido, setValido] = useState(false);
+const App = () => {
+  const [data, setData] = useState({ day: '', month: '', year: '' });
+  const [idade, setIdade] = useState({ years: '--', months: '--', days: '--' });
+  const [erros, setErros] = useState({ day: '', month: '', year: '' });
 
-  const AnoBissexto = (ano) => { //funcao pra verificar se é ano bissexto
+  const anoBissexto = (ano) => {
     return (ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0;
   };
 
-  const validarDados = (dia, mes, ano) => { //criacao de erros -> preenchimento 
+  const validarDados = (dia, mes, ano) => {
     let novosErros = {};
 
-    if (!dia.trim()) novosErros.dia = "This field is required";
-    if (!mes.trim()) novosErros.mes = "This field is required";
-    if (!ano.trim()) novosErros.ano = "This field is required";
-
-    if (Object.keys(novosErros).length > 0) return novosErros;
-
-    // converte a string pra int
-    dia = parseInt(dia); 
-    mes = parseInt(mes);
-    ano = parseInt(ano);
-
-    const dataAtual = new Date();
-    const dataInserida = new Date(ano, mes - 1, dia);
-
-    // Verifica se a data é no futuro
-    if (dataInserida > dataAtual) {
-      novosErros.ano = "Must be in the past"; // data tem que ser no presente
+    // Validações independentes para cada campo
+    if (!dia.trim()) {
+      novosErros.day = "This field is required";
+    } else {
+      const diaNum = parseInt(dia);
+      if (isNaN(diaNum) || diaNum < 1 || diaNum > 31) {
+        novosErros.day = "Must be a valid day";
+      }
     }
 
-    if (mes < 1 || mes > 12) {
-      novosErros.mes = "Must be a valid month"; // filtro de entrada valida para meses
-    }
-    if (dia < 1 || dia > 31) {
-      novosErros.dia = "Must be a valid day"; // primeiro filtro de dias em relacao a 1-31
+    if (!mes.trim()) {
+      novosErros.month = "This field is required";
+    } else {
+      const mesNum = parseInt(mes);
+      if (isNaN(mesNum) || mesNum < 1 || mesNum > 12) {
+        novosErros.month = "Must be a valid month";
+      }
     }
 
-    const diasNoMes = { //var para definir limites de dias validos em cada mes
-      1: 31,
-      2: AnoBissexto(ano) ? 29 : 28, // Uso da funcao ano bissexto somente em fev
-      3: 31,
-      4: 30,
-      5: 31,
-      6: 30,
-      7: 31,
-      8: 31,
-      9: 30,
-      10: 31,
-      11: 30,
-      12: 31,
-    };
+    if (!ano.trim()) {
+      novosErros.year = "This field is required";
+    } else {
+      const anoNum = parseInt(ano);
+      const anoAtual = new Date().getFullYear();
+      if (isNaN(anoNum) || anoNum > anoAtual) {
+        novosErros.year = "Must be in the past";
+      }
+    }
 
-    if (dia > diasNoMes[mes]) { // validacao de dia
-      novosErros.dia = "Must be a valid date";
+    // Validações combinadas apenas se todos os campos estiverem preenchidos e válidos individualmente
+    const diaValido = !novosErros.day && dia.trim();
+    const mesValido = !novosErros.month && mes.trim();
+    const anoValido = !novosErros.year && ano.trim();
+
+    if (diaValido && mesValido && anoValido) {
+      const diaNum = parseInt(dia);
+      const mesNum = parseInt(mes);
+      const anoNum = parseInt(ano);
+
+      const diasNoMes = {
+        1: 31,
+        2: anoBissexto(anoNum) ? 29 : 28,
+        3: 31,
+        4: 30,
+        5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31,
+      };
+
+      if (diaNum > diasNoMes[mesNum]) {
+        novosErros.day = `Must be between 1-${diasNoMes[mesNum]}`;
+      }
+
+      const dataTeste = new Date(anoNum, mesNum - 1, diaNum);
+      if (dataTeste.getDate() !== diaNum || 
+          dataTeste.getMonth() + 1 !== mesNum || 
+          dataTeste.getFullYear() !== anoNum) {
+        novosErros.day = "Must be a valid date";
+      }
     }
 
     return novosErros;
   };
 
-  const calcularIdade = (dia, mes, ano) => { 
-    const dataNascimento = new Date(ano, mes - 1, dia);
-    const dataAtual = new Date();
+  const handleMudancaData = (campo, valor) => {
+    setData({ ...data, [campo]: valor });
+    setErros({ ...erros, [campo]: '' });
+  };
 
-    let anos = dataAtual.getFullYear() - dataNascimento.getFullYear();
-    let meses = dataAtual.getMonth() - dataNascimento.getMonth();
-    let dias = dataAtual.getDate() - dataNascimento.getDate();
+  const calcularIdade = () => {
+    const errosValidacao = validarDados(data.day, data.month, data.year);
+    setErros(errosValidacao);
+    
+    if (Object.keys(errosValidacao).length > 0) {
+      return;
+    }
+
+    const dataNascimento = new Date(
+      parseInt(data.year),
+      parseInt(data.month) - 1,
+      parseInt(data.day)
+    );
+    const hoje = new Date();
+
+    let anos = hoje.getFullYear() - dataNascimento.getFullYear();
+    let meses = hoje.getMonth() - dataNascimento.getMonth();
+    let dias = hoje.getDate() - dataNascimento.getDate();
 
     if (dias < 0) {
       meses--;
-      dias += new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 0).getDate();
+      dias += new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate();
     }
     if (meses < 0) {
       anos--;
       meses += 12;
     }
 
-    return { anos, meses, dias };
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const novosErros = validarDados(formData.dia, formData.mes, formData.ano);
-    if (Object.keys(novosErros).length > 0) {
-      setErros(novosErros);
-      setValido(false);
-      return;
-    }
-
-    setErros({});
-    setValido(true);
-
-    const idade = calcularIdade(formData.dia, formData.mes, formData.ano);
-    setIdade(idade);
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-
-    setErros({
-      ...erros,
-      [e.target.name]: "",
-    });
-
-    setValido(false);
-  };
-
-  const handleFocus = (e) => {
-    setErros({
-      ...erros,
-      [e.target.name]: "",
-    });
+    setIdade({ years: anos, months: meses, days: dias });
   };
 
   return (
     <div className="container">
       <div className="app">
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="inputs-container">
-            <label className={`input-group ${erros.dia ? "erro" : ""}`}>
-              <span className="label-text">DAY</span>
-              <input
-                type="number"
-                className={erros.dia ? "erro" : ""}
-                placeholder="DD"
-                name="dia"
-                value={formData.dia}
-                onChange={handleChange}
-                onFocus={handleFocus}
-              />
-              {erros.dia && <p className="error-text">{erros.dia}</p>}
-            </label>
-            <label className={`input-group ${erros.mes ? "erro" : ""}`}>
-              <span className="label-text">MONTH</span>
-              <input
-                type="number"
-                className={erros.mes ? "erro" : ""}
-                placeholder="MM"
-                name="mes"
-                value={formData.mes}
-                onChange={handleChange}
-                onFocus={handleFocus}
-              />
-              {erros.mes && <p className="error-text">{erros.mes}</p>}
-            </label>
-            <label className={`input-group ${erros.ano ? "erro" : ""}`}>
-              <span className="label-text">YEAR</span>
-              <input
-                type="number"
-                className={erros.ano ? "erro" : ""}
-                placeholder="AAAA"
-                name="ano"
-                value={formData.ano}
-                onChange={handleChange}
-                onFocus={handleFocus}
-              />
-              {erros.ano && <p className="error-text">{erros.ano}</p>}
-            </label>
-          </div>
-          <div className="divider">
-            <hr />
-            <button type="submit">
-              <img src="/images/icon-arrow.svg" alt="submit" />
-            </button>
-          </div>
-        </form>
-        <div className="result">
-          <p><span>{idade.anos}</span> years</p>
-          <p><span>{idade.meses}</span> months</p>
-          <p><span>{idade.dias}</span> days</p>
+        <Forms onDateChange={handleMudancaData} errors={erros} />
+        <div className="divider">
+          <hr />
+          <button onClick={calcularIdade} className="calculate-button">
+            <img 
+              src="/images/icon-arrow.svg" 
+              alt="Calculate age" 
+              className="arrow-icon"
+            />
+          </button>
         </div>
+        <Results age={idade} />
       </div>
     </div>
   );
-}
+};
 
 export default App;
